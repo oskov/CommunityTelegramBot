@@ -13,7 +13,7 @@ import java.util.List;
 
 //TODO rename , should be more related to sender class
 @Component
-public class GameCommunityBot implements LongPollingBot {
+public class DefaultLongPollingBot implements LongPollingBot {
     // TODO logging in project
     public static final String BOT_USERNAME = "GameCommunityBot";
 
@@ -23,9 +23,9 @@ public class GameCommunityBot implements LongPollingBot {
     private UpdateConsumer updateConsumer;
 
     @Autowired
-    public GameCommunityBot(@Value("${GAME_COMMUNITY_BOT_TOKEN}") String botToken,
-                            BotOptions botOptions,
-                            UpdateConsumer updateConsumer) {
+    public DefaultLongPollingBot(@Value("${COMMUNITY_BOT_TOKEN}") String botToken,
+                                 BotOptions botOptions,
+                                 UpdateConsumer updateConsumer) {
         this.botToken = botToken;
         this.botOptions = botOptions;
         this.updateConsumer = updateConsumer;

@@ -10,13 +10,13 @@ import org.warlodya.community.interfaces.TelegramAbsSender;
 
 //TODO rename , should be more related to receiver class
 @Component
-public class DefaultTelegramAbsSender extends DefaultAbsSender implements TelegramAbsSender {
+public class DefaultTelegramAbsSenderBot extends DefaultAbsSender implements TelegramAbsSender {
 
     private final String botToken;
 
     @Autowired
-    protected DefaultTelegramAbsSender(@Value("${GAME_COMMUNITY_BOT_TOKEN}") String botToken,
-                                       BotOptions options) {
+    protected DefaultTelegramAbsSenderBot(@Value("${GAME_COMMUNITY_BOT_TOKEN}") String botToken,
+                                          BotOptions options) {
         super((DefaultBotOptions) options); // TODO, fix cast
         this.botToken = botToken;
     }
