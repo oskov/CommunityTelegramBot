@@ -1,0 +1,55 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.5.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+}
+
+group 'org.warlodya.community'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+//configurations {
+//    developmentOnly
+//    runtimeClasspath {
+//        extendsFrom developmentOnly
+//    }
+//    compileOnly {
+//        extendsFrom annotationProcessor
+//    }
+//}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.telegram:telegrambots:4.9.1'
+    implementation 'org.telegram:telegrambots-spring-boot-starter:4.9.1'
+    implementation 'org.telegram:telegrambots-abilities:4.9.1' // TODO : get rid of dependency
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'mysql:mysql-connector-java'
+//    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    testCompile "org.testcontainers:testcontainers:1.14.3"
+    testCompile "org.testcontainers:mariadb:1.14.3"
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+// for dev
+//task copyLibs(type: Copy) {
+//    from configurations.runtimeClasspath
+//    into "${buildDir}/dependencies"
+//}
+//
+//build.dependsOn(copyLibs)
+// for dev end
+
+tasks.withType(JavaCompile).all {
+    options.compilerArgs += ['--enable-preview']
+}
+
+test {
+    jvmArgs '--enable-preview'
+    useJUnitPlatform()
+}

@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  mariadb:
+    image: library/mariadb:10.5
+    container_name: mysql-game-community-bot
+    volumes:
+      - ./db:/var/lib/mysql
+    env_file:
+      - db.env
+    ports:
+      - "9002:3306"
+  builder:
+    image: gradle:jdk14
+    working_dir: /home/gradle/project
+    volumes:
+      - ./build:/home/gradle/project/build
+      - ./src:/home/gradle/project/src
+      - ./build.gradle:/home/gradle/project/build.gradle
+      - ./settings.gradle:/home/gradle/project/settings.gradle
+    command: gradle build --continuous -x test -x testClasses
+
+  api:
+    image: openjdk:14-alpine
+    env_file:
+      - app.env
+    volumes:
+      - ./build:/app
+    depends_on:
+      - builder
+      - mariadb
+    command: sh -c 'sleep 10 && java --enable-preview -cp "/app/classes/java/main:/app/dependencies/*:/app/resources/main" org.warlodya.community.Application'

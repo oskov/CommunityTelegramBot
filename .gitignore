@@ -1,0 +1,8 @@
+/.gradle/
+/.idea/
+/build/
+/GameCommunityBot
+/docker/app.jar
+/db/
+/app.env
+/db.env
