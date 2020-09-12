@@ -3,7 +3,6 @@ package org.warlodya.community.entities;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "event")
@@ -12,7 +11,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
     private int eventId;
-    private Date eventDate;
+    private LocalDateTime eventDate;
     @ManyToOne
     @NotNull
     private BotUser creator;
@@ -21,7 +20,7 @@ public class Event {
     @NotNull
     private LocalDateTime createdDt;
 
-    public Event(Date eventDate, BotUser creator, String eventName, String message) {
+    public Event(LocalDateTime eventDate, BotUser creator, String eventName, String message) {
         this.eventDate = eventDate;
         this.creator = creator;
         this.eventName = eventName;
@@ -40,7 +39,7 @@ public class Event {
         return eventId;
     }
 
-    public Date getEventDate() {
+    public LocalDateTime getEventDate() {
         return eventDate;
     }
 

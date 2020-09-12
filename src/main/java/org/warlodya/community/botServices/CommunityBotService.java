@@ -12,11 +12,17 @@ public class CommunityBotService implements UpdateConsumer {
 
     private UserService userService;
     private List<BotAbstractAction> botActions;
+    private List<BotInSessionAction> botInSessionActions;
 
     @Autowired
-    public CommunityBotService(UserService userService, List<BotAbstractAction> botActions) {
+    public CommunityBotService(
+            UserService userService,
+            List<BotAbstractAction> botActions,
+            List<BotInSessionAction> botInSessionActions
+    ) {
         this.userService = userService;
         this.botActions = botActions;
+        this.botInSessionActions = botInSessionActions;
     }
 
     @Override
@@ -25,20 +31,27 @@ public class CommunityBotService implements UpdateConsumer {
     }
 
     private boolean sendUpdatesToActions(Update update) {
-        var user = userService.addTelegramUserFromUpdate(update);
-        botActions.stream()
-                .filter(botAction -> botAction.isAllowed(update))
-                .forEach(botAction -> {
-                    if (botAction instanceof BotUpdateRelatedAction action) {
-                        action.execute(update);
-                    }
-                    if (botAction instanceof BotUserRelatedAction action) {
-                        action.execute(update, user);
-                    }
-                    if (botAction instanceof BotSimpleAction action) {
-                        action.execute();
-                    }
-                });
+        var botUser = userService.addTelegramUserFromUpdate(update);
+        var session = userService.getSessionForBotUser(botUser);
+        if (session.isPresent()) {
+            botInSessionActions.stream()
+                    .filter(botInSessionAction -> botInSessionAction.isAllowed(update, session.get()))
+                    .forEach(botInSessionAction -> botInSessionAction.execute(update, botUser, session.get()));
+        } else {
+            botActions.stream()
+                    .filter(botAction -> botAction.isAllowed(update))
+                    .forEach(botAction -> {
+                        if (botAction instanceof BotUpdateRelatedAction action) {
+                            action.execute(update);
+                        }
+                        if (botAction instanceof BotUserRelatedAction action) {
+                            action.execute(update, botUser);
+                        }
+                        if (botAction instanceof BotSimpleAction action) {
+                            action.execute();
+                        }
+                    });
+        }
         return true; // TODO
     }
 }

@@ -6,6 +6,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.warlodya.community.entities.BotUser;
 import org.warlodya.community.repositories.UserCrudRepository;
+import org.warlodya.community.session.Session;
+import org.warlodya.community.session.SessionCrudRepository;
 import org.warlodya.community.util.UpdateUtils;
 
 import java.util.Optional;
@@ -13,6 +15,7 @@ import java.util.Optional;
 @Component
 public class UserService {
     private UserCrudRepository userRepository;
+    private SessionCrudRepository sessionCrudRepository;
 
     @Autowired
     public UserService(UserCrudRepository userRepository) {
@@ -46,5 +49,9 @@ public class UserService {
         }
 
         return botUser;
+    }
+
+    public Optional<Session> getSessionForBotUser(BotUser botUser) {
+        return Optional.ofNullable(sessionCrudRepository.findByRelatedUser(botUser));
     }
 }

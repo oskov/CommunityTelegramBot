@@ -38,4 +38,8 @@ public class UpdateUtils {
     public static boolean isPrivateMessage(Update update) {
         return update.hasMessage() && update.getMessage().isUserMessage();
     }
+
+    public static boolean hasText(Update update) {
+        return update.hasMessage() && update.getMessage().hasText();
+    }
 }
