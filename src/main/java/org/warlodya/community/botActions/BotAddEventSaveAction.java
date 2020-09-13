@@ -15,6 +15,7 @@ import org.warlodya.community.session.SessionType;
 import org.warlodya.community.util.RegexPatterns;
 import org.warlodya.community.util.UpdateUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -60,7 +61,7 @@ public class BotAddEventSaveAction implements BotInSessionAction {
 
     private Optional<LocalDateTime> getDateFromString(String dateString) {
         if (dateString.matches(RegexPatterns.MYSQL_DATE_REGEX)) {
-            return Optional.of(LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            return Optional.of(LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay());
         }
         if (dateString.matches(RegexPatterns.MYSQL_DATE_TIME_PATTERN_REGEX)) {
             return Optional.of(LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
