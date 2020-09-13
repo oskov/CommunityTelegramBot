@@ -22,6 +22,6 @@ public class BotDebugAction implements BotUpdateRelatedAction {
 
     @Override
     public boolean isAllowed(Update update) {
-        return true;
+        return false;
     }
 }
