@@ -33,10 +33,10 @@ public class CommunityBotService implements UpdateConsumer {
     private boolean sendUpdatesToActions(Update update) {
         var botUser = userService.addTelegramUserFromUpdate(update);
         var session = userService.getSessionForBotUser(botUser);
-        if (session.isPresent()) {
+        if (session != null) {
             botInSessionActions.stream()
-                    .filter(botInSessionAction -> botInSessionAction.isAllowed(update, session.get()))
-                    .forEach(botInSessionAction -> botInSessionAction.execute(update, botUser, session.get()));
+                    .filter(botInSessionAction -> botInSessionAction.isAllowed(update, session))
+                    .forEach(botInSessionAction -> botInSessionAction.execute(update, botUser, session));
         } else {
             botActions.stream()
                     .filter(botAction -> botAction.isAllowed(update))

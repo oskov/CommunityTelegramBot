@@ -18,8 +18,9 @@ public class UserService {
     private SessionCrudRepository sessionCrudRepository;
 
     @Autowired
-    public UserService(UserCrudRepository userRepository) {
+    public UserService(UserCrudRepository userRepository, SessionCrudRepository sessionCrudRepository) {
         this.userRepository = userRepository;
+        this.sessionCrudRepository = sessionCrudRepository;
     }
 
     public Optional<BotUser> findBotUser(User user) {
@@ -51,12 +52,7 @@ public class UserService {
         return botUser;
     }
 
-    public Optional<Session> getSessionForBotUser(BotUser botUser) {
-        try {
-            var session = sessionCrudRepository.findByRelatedUser(botUser);
-            return Optional.of(session);
-        } catch (NullPointerException exception) {
-            return Optional.empty();
-        }
+    public Session getSessionForBotUser(BotUser botUser) {
+        return sessionCrudRepository.findByRelatedUser(botUser);
     }
 }
