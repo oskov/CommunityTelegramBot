@@ -16,10 +16,11 @@ Docker-compose
 Create app.env file with content:
 
 ```code
-COMMUNITY_BOT_TOKEN={{bot_token}}
-MYSQL_USER={{msql user}}
-MYSQL_PASSWORD={{msql pass}}
-MYSQL_DATABASE={{msql db}}
+COMMUNITY_BOT_TOKEN={{bot_token}} # check @BotFather in telegram
+MYSQL_USER={{mysql user}}
+MYSQL_PASSWORD={{mysql pass}}
+MYSQL_DATABASE={{mysql db}}
+MYSQL_HOST={{mysql host}} # localhost:3306
 ```
 
 Create db.env file with content:
@@ -38,7 +39,7 @@ MYSQL_DATABASE={{msql db}}
 ./buildAndRun.sh
 ```
 
-# Run with code reload using Gradle in container and local ./build folder
+# Run db for development
 
 ```code
 ./run.sh

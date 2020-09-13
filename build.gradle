@@ -54,6 +54,7 @@ tasks.withType(JavaCompile).all {
 tasks.withType(JavaExec) {
     jvmArgs += '--enable-preview'
 }
+
 test {
     jvmArgs '--enable-preview'
     useJUnitPlatform()
