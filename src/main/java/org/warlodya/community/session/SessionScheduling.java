@@ -19,6 +19,6 @@ public class SessionScheduling {
     // 5 minutes
     @Scheduled(fixedRate = 1000 * 60 * 5)
     public void removeExpiredSessions() {
-        sessionCrudRepository.removeExpired(LocalDateTime.now());
+        sessionCrudRepository.deleteByExpirationDtBefore(LocalDateTime.now());
     }
 }
