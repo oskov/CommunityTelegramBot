@@ -55,8 +55,6 @@ public class BotAddEventSaveNameAction implements BotInSessionAction {
     @Override
     public boolean isAllowed(Update update, Session session) {
         boolean shouldAddName = session.getState().flags.getOrDefault("addName", false);
-        System.out.println("Should add name " + shouldAddName);
-        System.out.println(session.getState().flags.toString());
         return UpdateUtils.hasText(update) && session.getSessionType() == SessionType.ADD_EVENT && shouldAddName;
     }
 }
