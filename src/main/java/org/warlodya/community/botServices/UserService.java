@@ -52,6 +52,11 @@ public class UserService {
     }
 
     public Optional<Session> getSessionForBotUser(BotUser botUser) {
-        return Optional.ofNullable(sessionCrudRepository.findByRelatedUser(botUser));
+        try {
+            var session = sessionCrudRepository.findByRelatedUser(botUser);
+            return Optional.of(session);
+        } catch (NullPointerException exception) {
+            return Optional.empty();
+        }
     }
 }
