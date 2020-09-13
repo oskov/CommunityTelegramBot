@@ -2,6 +2,7 @@ package org.warlodya.community.botActions;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.warlodya.community.entities.BotUser;
 import org.warlodya.community.interfaces.BotInSessionAction;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+@Component
 public class BotAddEventSaveDescriptionAction implements BotInSessionAction {
     private SessionCrudRepository sessionCrudRepository;
     private TelegramBotApi telegramBotApi;

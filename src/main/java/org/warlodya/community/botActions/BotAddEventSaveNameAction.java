@@ -3,6 +3,7 @@ package org.warlodya.community.botActions;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.warlodya.community.entities.BotUser;
 import org.warlodya.community.interfaces.BotInSessionAction;
@@ -14,6 +15,7 @@ import org.warlodya.community.util.UpdateUtils;
 
 import java.util.Locale;
 
+@Component
 public class BotAddEventSaveNameAction implements BotInSessionAction {
     private SessionCrudRepository sessionCrudRepository;
     private TelegramBotApi telegramBotApi;
@@ -53,6 +55,8 @@ public class BotAddEventSaveNameAction implements BotInSessionAction {
     @Override
     public boolean isAllowed(Update update, Session session) {
         boolean shouldAddName = session.getState().flags.getOrDefault("addName", false);
+        System.out.println("Should add name " + shouldAddName);
+        System.out.println(session.getState().flags.toString());
         return UpdateUtils.hasText(update) && session.getSessionType() == SessionType.ADD_EVENT && shouldAddName;
     }
 }
