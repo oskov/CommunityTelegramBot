@@ -15,7 +15,7 @@ public class DefaultTelegramAbsSenderBot extends DefaultAbsSender implements Tel
     private final String botToken;
 
     @Autowired
-    protected DefaultTelegramAbsSenderBot(@Value("${GAME_COMMUNITY_BOT_TOKEN}") String botToken,
+    protected DefaultTelegramAbsSenderBot(@Value("${COMMUNITY_BOT_TOKEN}") String botToken,
                                           BotOptions options) {
         super((DefaultBotOptions) options); // TODO, fix cast
         this.botToken = botToken;
