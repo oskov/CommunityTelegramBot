@@ -3,17 +3,16 @@ package org.warlodya.community.botActions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.warlodya.community.entities.BotUser;
-import org.warlodya.community.interfaces.BotUserRelatedAction;
+import org.warlodya.community.interfaces.BotAction;
 import org.warlodya.community.interfaces.NameService;
 import org.warlodya.community.interfaces.TelegramBotApi;
+import org.warlodya.community.request.BotRequest;
 import org.warlodya.community.util.UpdateUtils;
 
 import java.util.Locale;
 
 @Component
-public class BotWelcomeAction implements BotUserRelatedAction {
+public class BotWelcomeAction implements BotAction {
     private MessageSource messageSource;
     private NameService nameService;
     private TelegramBotApi telegramBotApi;
@@ -26,16 +25,19 @@ public class BotWelcomeAction implements BotUserRelatedAction {
     }
 
     @Override
-    public void execute(Update update, BotUser botUser) {
-        String languageCode = UpdateUtils.getLocale(update);
-        String authorName = nameService.getAuthorName(botUser);
-        String message = messageSource.getMessage("welcome.message", new String[]{authorName}, new Locale(languageCode));
-        long chatId = UpdateUtils.getChatId(update);
+    public void execute(BotRequest botRequest) {
+        var update = botRequest.getUpdate();
+        var botUser = botRequest.getBotUser();
+        var languageCode = UpdateUtils.getLocale(update);
+        var authorName = nameService.getAuthorName(botUser);
+        var message = messageSource.getMessage("welcome.message", new String[]{authorName}, new Locale(languageCode));
+        var chatId = UpdateUtils.getChatId(update);
         telegramBotApi.sendMessage(message, chatId);
     }
 
     @Override
-    public boolean isAllowed(Update update) {
+    public boolean isAllowed(BotRequest botRequest) {
+        var update = botRequest.getUpdate();
         return update.getMessage() != null && update.getMessage().getNewChatMembers().size() > 0;
     }
 }

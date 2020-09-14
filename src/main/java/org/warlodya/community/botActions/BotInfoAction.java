@@ -2,14 +2,13 @@ package org.warlodya.community.botActions;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.warlodya.community.interfaces.BotUpdateRelatedAction;
+import org.warlodya.community.interfaces.BotAction;
 import org.warlodya.community.interfaces.TelegramBotApi;
+import org.warlodya.community.request.BotRequest;
 import org.warlodya.community.util.UpdateUtils;
 
 @Component
-public class BotInfoAction implements BotUpdateRelatedAction {
-
+public class BotInfoAction implements BotAction {
     private TelegramBotApi telegramBotApi;
 
     @Autowired
@@ -18,12 +17,12 @@ public class BotInfoAction implements BotUpdateRelatedAction {
     }
 
     @Override
-    public void execute(Update update) {
-        telegramBotApi.sendMessage("TBA =)", UpdateUtils.getChatId(update)); // TODO implement
+    public void execute(BotRequest botRequest) {
+        telegramBotApi.sendMessage("TBA =)", UpdateUtils.getChatId(botRequest.getUpdate())); // TODO implement
     }
 
     @Override
-    public boolean isAllowed(Update update) {
-        return UpdateUtils.isSingleCommand(update, "info"); // TODO, some abstraction for single commands
+    public boolean isAllowed(BotRequest botRequest) {
+        return UpdateUtils.isSingleCommand(botRequest.getUpdate(), "info");
     }
 }

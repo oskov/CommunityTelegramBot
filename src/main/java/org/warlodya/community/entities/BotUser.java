@@ -1,5 +1,7 @@
 package org.warlodya.community.entities;
 
+import org.checkerframework.common.aliasing.qual.Unique;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -10,6 +12,7 @@ public class BotUser {
     public static final int UNKNOWN_PRIVATE_CHAT_ID = -1;
 
     @Id
+    @Unique
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
     private int userId;

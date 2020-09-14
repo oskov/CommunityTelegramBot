@@ -35,6 +35,15 @@ public class UpdateUtils {
         return message.get().trim().equals('/' + command);
     }
 
+
+    public static boolean isCommand(Update update, String command) {
+        var message = getTextMessage(update);
+        if (message.isEmpty()) {
+            return false;
+        }
+        return message.get().contains('/' + command); //TODO refactor
+    }
+
     public static boolean isPrivateMessage(Update update) {
         return update.hasMessage() && update.getMessage().isUserMessage();
     }

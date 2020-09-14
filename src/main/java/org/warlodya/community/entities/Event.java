@@ -1,5 +1,7 @@
 package org.warlodya.community.entities;
 
+import org.checkerframework.common.aliasing.qual.Unique;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -8,6 +10,7 @@ import java.time.LocalDateTime;
 @Table(name = "event")
 public class Event {
     @Id
+    @Unique
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
     private int eventId;
@@ -17,6 +20,7 @@ public class Event {
     private BotUser creator;
     private String eventName;
     private String message;
+    private boolean isDeleted = false;
     @NotNull
     private LocalDateTime createdDt;
 
@@ -57,5 +61,9 @@ public class Event {
 
     public LocalDateTime getCreatedDt() {
         return createdDt;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
     }
 }

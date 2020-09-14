@@ -1,12 +1,13 @@
-package org.warlodya.community.botActions;
+package org.warlodya.community.botActions.addEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.warlodya.community.entities.BotUser;
-import org.warlodya.community.interfaces.BotUserRelatedAction;
+import org.warlodya.community.interfaces.BotAction;
 import org.warlodya.community.interfaces.TelegramBotApi;
+import org.warlodya.community.request.BotRequest;
 import org.warlodya.community.session.Session;
 import org.warlodya.community.session.SessionCrudRepository;
 import org.warlodya.community.session.SessionState;
@@ -17,7 +18,7 @@ import org.warlodya.community.util.UpdateUtils;
 import java.util.Locale;
 
 @Component
-public class BotAddEventStartSessionAction implements BotUserRelatedAction {
+public class BotAddEventStartSessionAction implements BotAction {
     private SessionCrudRepository sessionCrudRepository;
     private TelegramBotApi telegramBotApi;
     private MessageSource messageSource;
@@ -31,12 +32,6 @@ public class BotAddEventStartSessionAction implements BotUserRelatedAction {
         this.telegramBotApi = telegramBotApi;
         this.sessionCrudRepository = sessionCrudRepository;
         this.messageSource = messageSource;
-    }
-
-    @Override
-    public void execute(Update update, BotUser botUser) {
-        createNewSession(botUser);
-        sendMessageToUser(update);
     }
 
     private void createNewSession(BotUser botUser) {
@@ -53,7 +48,13 @@ public class BotAddEventStartSessionAction implements BotUserRelatedAction {
     }
 
     @Override
-    public boolean isAllowed(Update update) {
-        return UpdateUtils.isSingleCommand(update, "addEvent");
+    public void execute(BotRequest botRequest) {
+        createNewSession(botRequest.getBotUser());
+        sendMessageToUser(botRequest.getUpdate());
+    }
+
+    @Override
+    public boolean isAllowed(BotRequest botRequest) {
+        return UpdateUtils.isSingleCommand(botRequest.getUpdate(), "addEvent");
     }
 }

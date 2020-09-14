@@ -1,4 +1,4 @@
-package org.warlodya.community.botActions;
+package org.warlodya.community.botActions.addEvent;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +7,10 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.warlodya.community.entities.BotUser;
 import org.warlodya.community.entities.Event;
-import org.warlodya.community.interfaces.BotInSessionAction;
+import org.warlodya.community.interfaces.BotAction;
 import org.warlodya.community.interfaces.TelegramBotApi;
 import org.warlodya.community.repositories.EventCrudRepository;
+import org.warlodya.community.request.BotRequest;
 import org.warlodya.community.session.Session;
 import org.warlodya.community.session.SessionCrudRepository;
 import org.warlodya.community.session.SessionType;
@@ -23,7 +24,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 @Component
-public class BotAddEventSaveAction implements BotInSessionAction {
+public class BotAddEventSaveAction implements BotAction {
     private SessionCrudRepository sessionCrudRepository;
     private EventCrudRepository eventCrudRepository;
     private TelegramBotApi telegramBotApi;
@@ -40,19 +41,6 @@ public class BotAddEventSaveAction implements BotInSessionAction {
         this.sessionCrudRepository = sessionCrudRepository;
         this.eventCrudRepository = eventCrudRepository;
         this.messageSource = messageSource;
-    }
-
-    @Override
-    public void execute(Update update, BotUser botUser, Session session) {
-        var dateTime = getDateFromString(update.getMessage().getText());
-        if (dateTime.isEmpty()) {
-            sendErrorMessageToUser(update);
-            return;
-        }
-        var event = createNewEvent(dateTime.get(), botUser, session);
-        eventCrudRepository.save(event);
-        sessionCrudRepository.delete(session);
-        sendMessageToUser(update, event.getEventName());
     }
 
     private Event createNewEvent(LocalDateTime dateTime, BotUser botUser, Session session) {
@@ -91,7 +79,25 @@ public class BotAddEventSaveAction implements BotInSessionAction {
     }
 
     @Override
-    public boolean isAllowed(Update update, Session session) {
+    public void execute(BotRequest botRequest) {
+        var botUser = botRequest.getBotUser();
+        var session = botRequest.getSession();
+        var update = botRequest.getUpdate();
+        var dateTime = getDateFromString(update.getMessage().getText());
+        if (dateTime.isEmpty()) {
+            sendErrorMessageToUser(update);
+            return;
+        }
+        var event = createNewEvent(dateTime.get(), botUser, session);
+        eventCrudRepository.save(event);
+        sessionCrudRepository.delete(session);
+        sendMessageToUser(update, event.getEventName());
+    }
+
+    @Override
+    public boolean isAllowed(BotRequest botRequest) {
+        var session = botRequest.getSession();
+        var update = botRequest.getUpdate();
         boolean shouldAddDate = session.getState().flags.getOrDefault("addDate", false);
         return UpdateUtils.hasText(update) && session.getSessionType() == SessionType.ADD_EVENT && shouldAddDate;
     }

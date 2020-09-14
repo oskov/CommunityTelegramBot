@@ -4,9 +4,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.context.MessageSource;
+import org.warlodya.community.AbstractBotActionTest;
 import org.warlodya.community.SavedUpdates;
+import org.warlodya.community.botActions.addEvent.BotAddEventStartSessionAction;
 import org.warlodya.community.entities.BotUser;
 import org.warlodya.community.interfaces.TelegramBotApi;
+import org.warlodya.community.request.BotRequest;
 import org.warlodya.community.session.Session;
 import org.warlodya.community.session.SessionCrudRepository;
 import org.warlodya.community.session.SessionType;
@@ -17,7 +20,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.*;
 
-class BotAddEventStartSessionActionTest {
+class BotAddEventStartSessionActionTest extends AbstractBotActionTest {
     private TelegramBotApi telegramBotApi;
     private SessionCrudRepository sessionRepository;
     private MessageSource messageSource;
@@ -35,7 +38,8 @@ class BotAddEventStartSessionActionTest {
 
         BotUser botUser = mock(BotUser.class);
         BotAddEventStartSessionAction action = new BotAddEventStartSessionAction(telegramBotApi, sessionRepository, messageSource);
-        action.execute(SavedUpdates.getUpdateWithMessage("/addEvent"), botUser);
+        BotRequest botRequest = createBotRequest(SavedUpdates.getUpdateWithMessage("/addEvent"), botUser, null);
+        action.execute(botRequest);
 
         verify(sessionRepository).save(captor.capture());
         Session session = captor.getValue();
@@ -49,6 +53,7 @@ class BotAddEventStartSessionActionTest {
     @Test
     void isAllowed() {
         BotAddEventStartSessionAction action = new BotAddEventStartSessionAction(telegramBotApi, sessionRepository, messageSource);
-        assertTrue(action.isAllowed(SavedUpdates.getUpdateWithMessage("/addEvent")));
+        BotRequest botRequest = createBotRequest(SavedUpdates.getUpdateWithMessage("/addEvent"), null, null);
+        assertTrue(action.isAllowed(botRequest));
     }
 }

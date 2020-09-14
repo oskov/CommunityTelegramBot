@@ -13,7 +13,7 @@ import org.warlodya.community.request.BotRequest;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-class BotListEventsActionTest extends AbstractBotActionTest {
+class BotListMyEventsActionTest extends AbstractBotActionTest {
     private TelegramBotApi telegramBotApi;
     private EventCrudRepository eventCrudRepository;
     private MessageSource messageSource;
@@ -28,14 +28,9 @@ class BotListEventsActionTest extends AbstractBotActionTest {
     }
 
     @Test
-    void execute() {
-    }
-
-
-    @Test
     void isAllowed() {
-        BotListEventsAction action = new BotListEventsAction(telegramBotApi, messageSource, eventCrudRepository, nameService);
-        BotRequest botRequest = createBotRequest(SavedUpdates.getUpdateWithMessage("/events"), null, null);
+        BotListMyEventsAction action = new BotListMyEventsAction(telegramBotApi, eventCrudRepository, nameService, messageSource);
+        BotRequest botRequest = createBotRequest(SavedUpdates.getUpdateWithMessage("/myEvents"), null, null);
         assertTrue(action.isAllowed(botRequest));
     }
 }

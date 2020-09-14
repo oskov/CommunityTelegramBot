@@ -3,8 +3,9 @@ package org.warlodya.community.botActions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.warlodya.community.AbstractBotActionTest;
 
-class BotWelcomeActionTest {
+class BotWelcomeActionTest extends AbstractBotActionTest {
 
     @BeforeEach
     void setUp() {

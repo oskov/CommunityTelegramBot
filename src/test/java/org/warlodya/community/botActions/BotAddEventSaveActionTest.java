@@ -4,11 +4,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.context.MessageSource;
+import org.warlodya.community.AbstractBotActionTest;
 import org.warlodya.community.SavedUpdates;
+import org.warlodya.community.botActions.addEvent.BotAddEventSaveAction;
 import org.warlodya.community.entities.BotUser;
 import org.warlodya.community.entities.Event;
 import org.warlodya.community.interfaces.TelegramBotApi;
 import org.warlodya.community.repositories.EventCrudRepository;
+import org.warlodya.community.request.BotRequest;
 import org.warlodya.community.session.Session;
 import org.warlodya.community.session.SessionCrudRepository;
 import org.warlodya.community.session.SessionState;
@@ -22,7 +25,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-class BotAddEventSaveActionTest {
+class BotAddEventSaveActionTest extends AbstractBotActionTest {
     private TelegramBotApi telegramBotApi;
     private SessionCrudRepository sessionRepository;
     private MessageSource messageSource;
@@ -49,7 +52,10 @@ class BotAddEventSaveActionTest {
 
         BotUser botUser = mock(BotUser.class);
         BotAddEventSaveAction action = new BotAddEventSaveAction(telegramBotApi, sessionRepository, eventCrudRepository, messageSource);
-        action.execute(SavedUpdates.getUpdateWithMessage("2020-02-20"), botUser, session);
+
+        BotRequest botRequest = createBotRequest(SavedUpdates.getUpdateWithMessage("2020-02-20"), botUser, session);
+
+        action.execute(botRequest);
 
         verify(sessionRepository, times(1)).delete(session);
         verify(eventCrudRepository).save(captor.capture());
@@ -72,7 +78,10 @@ class BotAddEventSaveActionTest {
 
         BotUser botUser = mock(BotUser.class);
         BotAddEventSaveAction action = new BotAddEventSaveAction(telegramBotApi, sessionRepository, eventCrudRepository, messageSource);
-        action.execute(SavedUpdates.getUpdateWithMessage("2020-02-20 04:20"), botUser, session);
+
+        BotRequest botRequest = createBotRequest(SavedUpdates.getUpdateWithMessage("2020-02-20 04:20"), botUser, session);
+
+        action.execute(botRequest);
 
         verify(sessionRepository, times(1)).delete(session);
         verify(eventCrudRepository).save(captor.capture());
@@ -95,7 +104,10 @@ class BotAddEventSaveActionTest {
 
         BotUser botUser = mock(BotUser.class);
         BotAddEventSaveAction action = new BotAddEventSaveAction(telegramBotApi, sessionRepository, eventCrudRepository, messageSource);
-        action.execute(SavedUpdates.getUpdateWithMessage("not date"), botUser, session);
+
+        BotRequest botRequest = createBotRequest(SavedUpdates.getUpdateWithMessage("error"), botUser, session);
+
+        action.execute(botRequest);
 
         verify(sessionRepository, times(0)).delete(session);
         verify(eventCrudRepository, times(0)).save(notNull());
@@ -113,6 +125,8 @@ class BotAddEventSaveActionTest {
 
         BotAddEventSaveAction action = new BotAddEventSaveAction(telegramBotApi, sessionRepository, eventCrudRepository, messageSource);
 
-        action.isAllowed(SavedUpdates.getUpdateWithMessage(""), session);
+        BotRequest botRequest = createBotRequest(SavedUpdates.getUpdateWithMessage(""), null, session);
+
+        action.isAllowed(botRequest);
     }
 }

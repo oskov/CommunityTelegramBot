@@ -2,56 +2,31 @@ package org.warlodya.community.botServices;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.warlodya.community.interfaces.*;
+import org.warlodya.community.interfaces.BotAction;
+import org.warlodya.community.interfaces.BotRequestConsumer;
+import org.warlodya.community.request.BotRequest;
 
 import java.util.List;
 
 @Component
-public class CommunityBotService implements UpdateConsumer {
-
-    private UserService userService;
-    private List<BotAbstractAction> botActions;
-    private List<BotInSessionAction> botInSessionActions;
+public class CommunityBotService implements BotRequestConsumer {
+    private List<BotAction> botActions;
 
     @Autowired
     public CommunityBotService(
-            UserService userService,
-            List<BotAbstractAction> botActions,
-            List<BotInSessionAction> botInSessionActions
+            List<BotAction> botActions
     ) {
-        this.userService = userService;
         this.botActions = botActions;
-        this.botInSessionActions = botInSessionActions;
+    }
+
+    private void sendUpdatesToActions(BotRequest botRequest) {
+        botActions.stream()
+                .filter(botAction -> botAction.isAllowed(botRequest))
+                .forEach(botAction -> botAction.execute(botRequest));
     }
 
     @Override
-    public boolean consumeUpdate(Update update) {
-        return sendUpdatesToActions(update);
-    }
-
-    private boolean sendUpdatesToActions(Update update) {
-        var botUser = userService.addTelegramUserFromUpdate(update);
-        var session = userService.getSessionForBotUser(botUser);
-        if (session != null) {
-            botInSessionActions.stream()
-                    .filter(botInSessionAction -> botInSessionAction.isAllowed(update, session))
-                    .forEach(botInSessionAction -> botInSessionAction.execute(update, botUser, session));
-        } else {
-            botActions.stream()
-                    .filter(botAction -> botAction.isAllowed(update))
-                    .forEach(botAction -> {
-                        if (botAction instanceof BotUpdateRelatedAction action) {
-                            action.execute(update);
-                        }
-                        if (botAction instanceof BotUserRelatedAction action) {
-                            action.execute(update, botUser);
-                        }
-                        if (botAction instanceof BotSimpleAction action) {
-                            action.execute();
-                        }
-                    });
-        }
-        return true; // TODO
+    public void consumeBotRequest(BotRequest botRequest) {
+        sendUpdatesToActions(botRequest);
     }
 }

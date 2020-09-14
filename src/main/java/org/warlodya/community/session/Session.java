@@ -1,5 +1,6 @@
 package org.warlodya.community.session;
 
+import org.checkerframework.common.aliasing.qual.Unique;
 import org.warlodya.community.entities.BotUser;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Table(name = "session")
 public class Session {
     @Id
+    @Unique
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
     private int id;

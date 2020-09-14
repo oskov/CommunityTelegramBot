@@ -1,12 +1,12 @@
-package org.warlodya.community.botActions;
+package org.warlodya.community.botActions.addEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.warlodya.community.entities.BotUser;
-import org.warlodya.community.interfaces.BotInSessionAction;
+import org.warlodya.community.interfaces.BotAction;
 import org.warlodya.community.interfaces.TelegramBotApi;
+import org.warlodya.community.request.BotRequest;
 import org.warlodya.community.session.Session;
 import org.warlodya.community.session.SessionCrudRepository;
 import org.warlodya.community.session.SessionType;
@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 @Component
-public class BotAddEventSaveDescriptionAction implements BotInSessionAction {
+public class BotAddEventSaveDescriptionAction implements BotAction {
     private SessionCrudRepository sessionCrudRepository;
     private TelegramBotApi telegramBotApi;
     private MessageSource messageSource;
@@ -31,12 +31,6 @@ public class BotAddEventSaveDescriptionAction implements BotInSessionAction {
         this.telegramBotApi = telegramBotApi;
         this.sessionCrudRepository = sessionCrudRepository;
         this.messageSource = messageSource;
-    }
-
-    @Override
-    public void execute(Update update, BotUser botUser, Session session) {
-        changeSessionState(update, session);
-        sendMessageToUser(update);
     }
 
     private void changeSessionState(Update update, Session session) {
@@ -60,7 +54,17 @@ public class BotAddEventSaveDescriptionAction implements BotInSessionAction {
     }
 
     @Override
-    public boolean isAllowed(Update update, Session session) {
+    public void execute(BotRequest botRequest) {
+        var session = botRequest.getSession();
+        var update = botRequest.getUpdate();
+        changeSessionState(update, session);
+        sendMessageToUser(update);
+    }
+
+    @Override
+    public boolean isAllowed(BotRequest botRequest) {
+        var session = botRequest.getSession();
+        var update = botRequest.getUpdate();
         boolean shouldAddDescription = session.getState().flags.getOrDefault("addDescription", false);
         return UpdateUtils.hasText(update) && session.getSessionType() == SessionType.ADD_EVENT && shouldAddDescription;
     }
